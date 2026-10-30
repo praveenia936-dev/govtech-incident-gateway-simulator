@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Estate & Government Issue Gateway Simulator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="min-h-screen flex flex-col justify-between custom-scrollbar">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-gov-border bg-slate-900/90 sticky top-0 z-50 backdrop-blur">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-building-shield text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-white tracking-wide text-sm sm:text-base flex items-center gap-2">
+                        GovTech Singapore <span
+                            class="text-xs font-normal text-blue-400 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-800/60">OneService
+                            Gateway</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-400">Smart Estate Feedback Routing & Dispatch Engine</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div
+                    class="hidden sm:flex items-center gap-2 text-xs text-slate-300 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-lg">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Gateway Status: <span class="text-emerald-400 font-medium">200 OK / Live</span>
+                </div>
+                <button onclick="toggleRuleConfig()"
+                    class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-sliders text-blue-400"></i> Rules Config
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Priority Rules Modal -->
+    <div id="rules-modal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden">
+        <div
+            class="bg-slate-900 border border-slate-700 rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-brain text-blue-400"></i> AI Priority Trigger Keywords
+                </h3>
+                <button onclick="toggleRuleConfig()" class="text-slate-400 hover:text-white"><i
+                        class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                The smart intake engine continuously scans feedback descriptions. Any matching keyword triggers an
+                automated <span class="text-red-400 font-semibold">HIGH PRIORITY</span> flag and pushes the ticket to
+                the top of the queue.
+            </p>
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1.5">Current Priority Keywords:</label>
+                <div id="keyword-tags" class="flex flex-wrap gap-1.5 mb-3">
+                    <!-- Dynamic Badges -->
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="new-keyword" placeholder="e.g. fire, power loss, lift"
+                        class="bg-slate-950 border border-slate-700 text-xs rounded-lg px-3 py-2 text-white outline-none focus:border-blue-500 flex-1 font-mono">
+                    <button onclick="addKeyword()"
+                        class="bg-blue-600 hover:bg-blue-500 text-white text-xs px-4 py-2 rounded-lg font-medium transition-colors">Add</button>
+                </div>
+            </div>
+            <div class="text-right pt-2 border-t border-slate-800">
+                <button onclick="toggleRuleConfig()"
+                    class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-4 py-2 rounded-lg">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-1 space-y-6">
+
+        <!-- Grid Layout: Split View Intake vs Dispatch -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- ================= LEFT SIDE: CITIZEN REPORT INTAKE (5 cols) ================= -->
+            <section
+                class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col justify-between space-y-5">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-bullhorn text-blue-400"></i>
+                            <h2 class="text-base font-semibold text-white">Citizen Report Intake</h2>
+                        </div>
+                        <span class="text-[11px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Public Portal</span>
+                    </div>
+
+                    <!-- Preset Auto-fill Buttons -->
+                    <div class="space-y-1.5">
+                        <label class="text-[11px] text-slate-400 font-medium">Quick Test Simulators:</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="autofillSample('water')"
+                                class="text-xs bg-slate-800 hover:bg-slate-700/80 text-blue-300 border border-slate-700/80 px-2.5 py-1.5 rounded-lg text-left transition-colors flex items-center gap-1.5">
+                                <i class="fa-solid fa-droplet text-blue-400"></i> Water Pipe Leak
+                            </button>
+                            <button onclick="autofillSample('lamp')"
+                                class="text-xs bg-slate-800 hover:bg-slate-700/80 text-amber-300 border border-slate-700/80 px-2.5 py-1.5 rounded-lg text-left transition-colors flex items-center gap-1.5">
+                                <i class="fa-solid fa-lightbulb text-amber-400"></i> Broken Lamp Post
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Form Inputs -->
+                    <form id="intake-form" onsubmit="handleCitizenSubmit(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Resident Name</label>
+                            <input type="text" id="res-name" required placeholder="e.g. Tan Ah Kow"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition-colors">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">Location / Block
+                                    No.</label>
+                                <input type="text" id="res-location" required
+                                    placeholder="e.g. Blk 402 Ang Mo Kio Ave 10"
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                                <select id="res-category"
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-blue-500 transition-colors">
+                                    <option value="Infrastructure">Infrastructure</option>
+                                    <option value="Water & Drainage">Water & Drainage</option>
+                                    <option value="Environmental">Environmental</option>
+                                    <option value="Transport / Roads">Transport / Roads</option>
+                                    <option value="General Maintenance">General Maintenance</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Incident Description</label>
+                            <textarea id="res-desc" required rows="3" placeholder="Describe the issue in detail..."
+                                class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-white outline-none focus:border-blue-500 transition-colors resize-none"></textarea>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-1">
+                            <input type="checkbox" id="res-override"
+                                class="rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-0">
+                            <label for="res-override" class="text-xs text-slate-400 cursor-pointer select-none">Manual
+                                Emergency Override (Force High Priority)</label>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs py-2.5 rounded-lg shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Incident Ticket
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Info Box -->
+                <div
+                    class="bg-slate-950/80 border border-slate-800/80 rounded-lg p-3 text-[11px] text-slate-400 space-y-1 font-mono">
+                    <p class="text-blue-400 font-semibold flex items-center gap-1.5 font-sans">
+                        <i class="fa-solid fa-microchip"></i> Smart Sorting Algorithm:
+                    </p>
+                    <p class="leading-relaxed">Incoming text is tokenized against trigger keywords. Matches sort tickets
+                        instantly.</p>
+                </div>
+            </section>
+
+            <!-- ================= RIGHT SIDE: GOVERNMENT DISPATCH CONSOLE (7 cols) ================= -->
+            <section class="lg:col-span-7 space-y-6 flex flex-col">
+
+                <!-- 1. Active Queue Console -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl space-y-4 flex-1">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-emerald-400"></i>
+                            <h2 class="text-base font-semibold text-white">Government Dispatch Console</h2>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="queue-count"
+                                class="text-xs font-mono bg-blue-950 text-blue-400 border border-blue-800 px-2.5 py-0.5 rounded-full font-bold">0
+                                Pending</span>
+                        </div>
+                    </div>
+
+                    <!-- Dispatch Controls Bar -->
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <div class="sm:col-span-7">
+                            <label class="block text-[11px] font-medium text-slate-400 mb-1">Target Government Agency
+                                Endpoint:</label>
+                            <select id="agency-select"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-emerald-500 font-mono">
+                                <option value="PUB">PUB - National Water Agency</option>
+                                <option value="LTA">LTA - Land Transport Authority</option>
+                                <option value="HDB">HDB - Housing & Development Board</option>
+                                <option value="NEA">NEA - National Environment Agency</option>
+                                <option value="TOWN_COUNCIL" selected>Town Council Operations</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-5 flex items-end">
+                            <button onclick="dispatchSelectedTicket()"
+                                class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs py-2 rounded-lg shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-bolt"></i> Dispatch Issue Payload
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Ticket List Display -->
+                    <div id="queue-container" class="space-y-2.5 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+                        <!-- Dynamic Queue Items -->
+                    </div>
+                </div>
+
+                <!-- 2. Terminal Simulation & Payload Inspector -->
+                <div
+                    class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden font-mono text-xs shadow-xl">
+                    <div class="bg-slate-900 px-4 py-2 border-b border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-2 text-slate-400">
+                            <i class="fa-solid fa-network-wired text-blue-400"></i>
+                            <span class="font-semibold text-slate-200">Gateway Payload Inspector</span>
+                        </div>
+                        <span class="text-[10px] text-slate-500">POST /gateway/v1/dispatch</span>
+                    </div>
+
+                    <div class="p-4 space-y-2">
+                        <div class="flex justify-between text-[11px] text-slate-500 border-b border-slate-900 pb-1">
+                            <span>Status: <span id="api-status" class="text-emerald-400 font-bold">Standby</span></span>
+                        </div>
+                        <pre id="payload-output"
+                            class="text-emerald-400/90 h-32 overflow-y-auto custom-scrollbar text-[11px] leading-relaxed">// Select or dispatch a ticket from the queue above to generate payload JSON...</pre>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <!-- Archived / Resolved Dispatches Table -->
+        <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-box-archive text-amber-400"></i>
+                    <h2 class="text-base font-semibold text-white">Archived / Transmitted Gateway Dispatches</h2>
+                </div>
+                <span id="archived-count" class="text-xs font-mono text-slate-400">0 Items Logged</span>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400 bg-slate-950/60 font-mono">
+                            <th class="p-2.5">Ticket ID</th>
+                            <th class="p-2.5">Resident</th>
+                            <th class="p-2.5">Location</th>
+                            <th class="p-2.5">Priority</th>
+                            <th class="p-2.5">Assigned Agency</th>
+                            <th class="p-2.5">Timestamp</th>
+                            <th class="p-2.5 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="archive-table-body" class="divide-y divide-slate-800/60 text-slate-300">
+                        <tr>
+                            <td colspan="7" class="p-4 text-center text-slate-500 italic">No tickets dispatched through
+                                gateway yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-4 text-center text-xs text-slate-500">
+        <p>GovTech Smart Estate Simulator • OneService Infrastructure Demo • Built with JS Arrays</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
